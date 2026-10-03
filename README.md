@@ -1,60 +1,71 @@
-﻿# ProxyPanel · 应用代理观察台
+# ProxyPanel · 应用分流管理器
 
-Windows 上的 Clash Verge Rev 应用分流观察工具。v1.0.0 保留已验证的五应用卡片、后台连接检测、自动刷新和本机分流配置，先提供可用的便携首版。
+Windows + Clash Verge Rev 的应用分流工具。[下载 v1.1.0 通用版](https://github.com/jtl520/ProxyPanel/releases/tag/v1.1.0)。旧版 [v1.0.0](https://github.com/jtl520/ProxyPanel/releases/tag/v1.0.0) 保留，可按需下载。
 
-**[下载首版](https://github.com/jtl520/ProxyPanel/releases/latest)** · [版本记录](CHANGELOG.md) · [验证说明](VALIDATION.md)
+## 通用版功能
 
-## 功能
+- 添加任意 `.exe`，或从正在运行的进程中选择。
+- 每个应用选择 **不使用代理 / 使用代理 / 由 Clash 决定**。
+- 按完整程序路径、安装目录（含辅助进程）、进程名匹配；默认完整路径。
+- 编辑、移除、禁用、搜索应用；默认每轮读取后间隔 3 秒自动刷新。
+- 显示真实直连/代理连接数量，点击数量查看判定依据。
+- 导入/导出应用列表，失效路径单独提示并可重新定位。
+- 自动检测标准 Clash Verge Rev 配置目录，也可手动选择。
+- 只管理本工具的脚本段，不覆盖原订阅和用户脚本；加密备份、冲突检测和撤销。
+- 便携使用，或免管理员安装到当前用户目录，创建桌面和开始菜单快捷方式。
 
-- 查看 Codex、VMware NAT、Chrome、百度网盘、夸克网盘的活动连接。
-- 区分 DIRECT、代理、阻断、未知；无连接不等于直连。
-- 显示当前配置与实际连接，配置切换后旧连接可能继续沿用原路线。
-- 默认自动刷新：每次读取完成后等待 3 秒；后台读取不阻塞窗口。
-- 卡片支持窄窗口滚动，配置操作完成后自动刷新，操作期间防止重复点击。
-- 本机配置：Chrome、两个网盘及所选安装目录中的辅助程序 DIRECT；其余被 Clash 接管的流量走 GLOBAL。
-- 配置前创建 Windows 当前用户加密备份，支持撤销。
+## 使用
 
-## 首次使用
+1. 安装 Clash Verge Rev，导入自己的订阅并验证节点可用。工具不附带 Clash 或代理订阅。
+2. 完整解压构建生成的 `ProxyPanel-v1.1.0-windows-portable.zip`，打开 `ProxyPanel.exe`。也可双击 `Install.vbs` 安装到 `%LOCALAPPDATA%\Programs\ProxyPanel`。
+3. 点击“添加应用”，选择程序文件和匹配范围。网盘如需包含下载器、播放器等同目录辅助程序，可选择目录匹配；不要选择多个无关应用共用的目录。
+4. 在列表中选择直连、代理或跟随规则。修改此处先保存为草稿，不会立即改变网络。
+5. **从托盘完全退出 Clash Verge**，点击“应用设置”，然后重新启动 Clash。保持规则模式；需要接管普通应用流量时，在 Clash 内启用 TUN。工具不改变 TUN 状态。
+6. 查看“设置已生效”以及实际连接。已有连接不会被强制断开；未知归属、短连接及 UDP 不保证完整覆盖。
 
-1. 使用 Windows 10/11 64 位、Windows PowerShell 5.1（系统自带）。下载 Releases 中的 `windows-portable.zip` 并**完整解压**到可写目录。
-2. 安装并启动 Clash Verge Rev，导入自己的订阅，确认节点能够使用。然后从托盘**完全退出 Clash Verge**。
-3. 双击 `Configure.vbs`，或打开 `ProxyPanel.exe` 点击“配置本机分流”。按提示选择两个网盘的安装目录；未安装可以取消对应选择。
-4. 启动 Clash，启用其所需服务，确认 **规则模式、TUN 开启**，在 GLOBAL 中选择自己的节点。
-5. 打开 `ProxyPanel.exe`，使用相关应用后查看连接状态。普通监控不需要管理员权限，Clash 的 TUN 服务授权由 Clash 自己管理。
+撤销：退出 Clash → 点击“撤销本工具规则” → 重启 Clash。仅移除本工具管理段；其他流量继续遵循原有订阅/脚本，不再强制全部走 GLOBAL。全部应用改为“由 Clash 决定”、全部停用或移除后，也可直接点击“应用设置”，会自动移除本工具此前添加的规则；已有规则时仍需先退出 Clash Verge。
 
-已有自定义全局脚本时工具会停止，不覆盖用户脚本。本版检测标准安装目录下的 Clash Verge Rev 配置，不兼容所有叫“Clash”的客户端或便携目录布局。
+“GLOBAL”代表使用 Clash 的 GLOBAL 组；如果该组本身选择了 DIRECT，也会直连。“跟随规则”表示本工具不为该应用添加覆盖规则，不会撤销其他工具设置的规则。
 
-## 撤销与再次启用
+## 换电脑与升级
 
-从托盘完全退出 Clash，点击“撤销本工具配置”或运行 `Restore.vbs`，再启动 Clash。撤销会还原配置前的 `Script.js`、`config.yaml`、`verge.yaml`；如果配置后这三个文件已有其他变动，工具会拒绝覆盖，需要人工核对。
+在旧电脑导出应用列表，新电脑安装后导入，再在“设置”中检测 Clash。路径不同的应用会显示“路径失效”，点击“编辑”重新选择程序。按进程名匹配不依赖固定目录，但会匹配所有同名进程。
 
-撤销后可再次运行“配置本机分流”。不要删除程序目录中的 `migration-backup.dpapi`；它是本机恢复凭据，不能拿到另一台电脑或另一账户恢复。
+应用列表位于 `%LOCALAPPDATA%\ProxyPanel\settings.json`；管理状态和备份存储在同一目录，使用当前 Windows 用户加密。导出文件仅包含应用名称、路径、匹配方式和路线，不含订阅、接口密钥、节点或配置备份。加密备份不支持跨电脑/账户恢复。
 
-公开首版使用已有的新电脑配置流程，配置/撤销需要退出并重启 Clash。作者自用版本依赖个人历史备份的在线“恢复最初配置/撤销网盘调整”不随公开包分发。普通状态读取不修改代理，不会强制断开旧连接。
+从 1.0.0 升级：如使用过 1.0 的配置工具，先使用**原 1.0 程序目录中的 Restore.vbs 及其备份**撤销旧规则，再在新版重建应用列表。新版本不会擅自删除旧版本、订阅或其他工具的规则。
 
-## 边界
+安装器只复制程序文件，不覆盖应用列表或加密备份。卸载前先撤销本工具的规则，再删除安装目录和快捷方式；需要保留迁移能力时保留数据目录。
 
-- 本版固定监控五个应用，**尚不支持添加任意应用**；不附带 Clash、代理节点、订阅或浏览器代理扩展。
-- DIRECT 表示不使用 Clash 代理节点，仍消耗本地网络流量；浏览器自己的代理扩展需要独立管理。
-- VMware 的监控对象是 `vmnat.exe`；桥接网络不保证经过主机 TUN。
-- 根据 Clash 进程信息及 Windows TCP 端口归属匹配；短连接、UDP、间接代理和采样时间差会影响覆盖范围。不是完整抓包，也不保证每条连接都能归属。
-- 应用目录变化后需要重新配置；独立安装在其他目录的更新程序不一定被覆盖。
-- 软件没有代码签名证书，无后台自启服务，不保存浏览记录。运行策略 Bypass 仅限本次进程，不修改系统持久策略。
+## 支持范围
 
-## 从源码构建
+Windows 10/11 64 位，系统自带的 Windows PowerShell 5.1、.NET Framework 4.x，Clash Verge Rev。非标准配置目录可手动指定，但不支持其他 Clash 客户端的专有持久化结构或远程控制接口。
 
-在 **Windows PowerShell 5.1** 中运行：
+原全局脚本需提供 `function main(...)`。工具会调用并保留它的返回结果，再添加应用设置。脚本管理段被外部修改时，会停止应用/撤销，避免覆盖。不要同时在多个工具中编辑同一段规则。
+
+程序没有代码签名，不增加开机自启或后台服务；启动参数中的 ExecutionPolicy Bypass 只作用于该次进程。
+
+## 构建与验证
+
+在 Windows PowerShell 5.1 中运行：
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Build.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Test-General.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Test-Matching.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Test-Migration.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File .\Test-UI.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File .\Test-UI.ps1 -Layout
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Test-Mihomo.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Build.ps1
 ```
 
-生成 `dist/ProxyPanel-v1.0.0-windows-portable.zip` 和 SHA-256 校验文件；不需要安装 .NET SDK、npm 或 Python。启动器源码位于 `Launcher.cs`，界面位于 `Dashboard.ps1`。
+不需要 .NET SDK、npm 或 Python。Node.js 仅用于可选的生成脚本测试，不是程序运行依赖。产物位于 `dist/`，附 SHA-256 校验文件。打包使用文件白名单，不包含用户数据。
 
-## 发布与隐私
+- `Core.ps1`：应用配置、验证、规则生成、备份和撤销。
+- `Monitor.ps1` / `ProxyPanel.ps1`：Mihomo 只读接口及连接归属。
+- `Dashboard.ps1`：WPF 界面。
+- `Install.ps1`：当前用户安装。
+- [验证范围](VALIDATION.md) · [版本记录](CHANGELOG.md)
 
-仓库和发行包不包含订阅、密钥、节点配置、个人加密备份或机器连接日志。构建使用明确的文件白名单。提交问题前请移除个人路径、域名、订阅和密钥。
+本机选项回归测试还提供 `Test-UIOptions.ps1 -ManifestPath <manifest.json>` 和 `Test-OptionLifecycle.ps1 -ManifestPath <manifest.json>`。前者在独立列表中操作真实 WPF 控件并生成选项配置，后者在隔离 Clash 目录验证应用/撤销和生成脚本（需要 Node.js）。清单包含 `root`（当前用户 TEMP 下的专用测试目录）与 `apps` 数组，每项提供 `name` 和已安装 `.exe` 的绝对 `path`；先运行界面测试，再运行生命周期测试。这两个入口不修改实际 Clash 配置。真实联网验证记录不随公开源码上传。
 
-配置机制参考 [Clash Verge Rev 官方扩展脚本文档](https://www.clashverge.dev/guide/script.html)。
+官方协议依据：[Clash Verge Rev 扩展脚本](https://www.clashverge.dev/guide/script.html)、[Mihomo 路由规则](https://wiki.metacubex.one/config/rules/)。

@@ -25,4 +25,7 @@ $connection.chains=@('REJECT')
 Assert ((Get-RouteKind $connection @{}) -eq 'blocked') 'Blocked traffic must not classify as proxy.'
 $connection.chains=@()
 Assert ((Get-RouteKind $connection @{}) -eq 'unknown') 'Empty chain must remain unknown.'
-Write-Output 'PASS: 12 attribution and routing checks.'
+Assert ((Read-Scalar "secret:`nmode: rule" 'secret') -eq '') 'Empty scalar must not consume the next key.'
+$pipe='\\.\pipe\test-panel'
+Assert ((Read-Scalar ('external-controller-pipe: '+(ConvertTo-Json -InputObject $pipe -Compress)) 'external-controller-pipe') -ceq $pipe) 'Quoted pipe paths must be decoded.'
+Write-Output 'PASS: 12 attribution/routing and 2 YAML scalar checks.'
