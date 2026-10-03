@@ -1,0 +1,11 @@
+﻿dist/
+ProxyPanel.exe
+ProxyPanel.ico
+*.dpapi*
+Backup*/
+*-backup.txt
+layout-*.png
+verification-*.json
+test-results/
+*.log
+Thumbs.db
